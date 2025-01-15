@@ -8,34 +8,38 @@ namespace Studex.Services;
 
 public class LectureService(ICrudRepository<Lecture> lectureRepository) : ILectureService
 {
-    public async Task<Lecture> CreateAsync(LectureDto dto, CancellationToken ct = default)
+    public async Task<Lecture> CreateAsync(string userid, LectureDto dto, CancellationToken ct = default)
     {
         // TODO: Generate Content
         var lecture = dto.Adapt<LectureDto, Lecture>();
+        if (lecture.Course.UserId != userid)
+        {
+            throw new UnauthorizedAccessException("You are not authorized to create a lecture for this course");
+        }
         await lectureRepository.CreateAsync(lecture, ct);
         await lectureRepository.SaveAsync(ct);
         return lecture;
     }
 
-    public async Task<Lecture?> GetByIdAsync(Guid id, Expression<Func<Lecture, object>>[]? includeProperties = null, CancellationToken ct = default)
+    public async Task<Lecture?> GetByIdAsync(Guid id, string userId, Expression<Func<Lecture, object>>[]? includeProperties = null, CancellationToken ct = default)
     {
-        return await lectureRepository.GetByIdAsync(id, null, includeProperties, ct);
+        return await lectureRepository.GetByIdAsync(id, l => l.Course.UserId == userId, includeProperties, ct);
     }
 
-    public async Task<IEnumerable<Lecture>> GetAllAsync(Expression<Func<Lecture, object>>[]? includeProperties = null, CancellationToken ct = default)
+    public async Task<IEnumerable<Lecture>> GetAllAsync(string userId, Expression<Func<Lecture, object>>[]? includeProperties = null, CancellationToken ct = default)
     {
-        return await lectureRepository.GetAsync(null, includeProperties, ct);
+        return await lectureRepository.GetAsync(l => l.Course.UserId == userId, includeProperties, ct);
     }
 
-    public async Task<IEnumerable<Lecture>> GetAllByCourseIdAsync(Guid courseId, Expression<Func<Lecture, object>>[]? includeProperties = null, CancellationToken ct = default)
+    public async Task<IEnumerable<Lecture>> GetAllByCourseIdAsync(Guid courseId, string userId, Expression<Func<Lecture, object>>[]? includeProperties = null, CancellationToken ct = default)
     {
-        return await lectureRepository.GetAsync(l => l.CourseId == courseId, includeProperties, ct);
+        return await lectureRepository.GetAsync(l => l.CourseId == courseId && l.Course.UserId == userId, includeProperties, ct);
     }
 
-    public async Task<bool> UpdateAsync(Guid id, LectureDto dto, CancellationToken ct = default)
+    public async Task<bool> UpdateAsync(Guid id, string userId, LectureDto dto, CancellationToken ct = default)
     {
         // TODO: Generate Content
-        var lecture = await lectureRepository.GetByIdAsync(id, ct: ct);
+        var lecture = await lectureRepository.GetByIdAsync(id, l => l.Course.UserId == userId, ct: ct);
         if (lecture is null)
         {
             return false;
@@ -48,9 +52,9 @@ public class LectureService(ICrudRepository<Lecture> lectureRepository) : ILectu
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task<bool> DeleteAsync(Guid id, string userId, CancellationToken ct = default)
     {
-        var lecture = await lectureRepository.GetByIdAsync(id, ct: ct);
+        var lecture = await lectureRepository.GetByIdAsync(id, l => l.Course.UserId == userId, ct: ct);
         if (lecture is null)
         {
             return false;

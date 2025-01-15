@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Serilog;
@@ -26,6 +27,30 @@ services.AddDbContextPool<StudexContext>(options =>
         .UseNpgsql(connectionString)
         .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
 }, poolSize);
+
+var domain = builder.Configuration["Auth0:Domain"];
+var audience = builder.Configuration["Auth0:Audience"];
+
+services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.Authority = $"https://{domain}/";
+        options.Audience = audience;
+
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true
+        };
+    });
+
+services.AddAuthorization();
 
 services.AddScopedServices();
 services.AddScoped(typeof(ICrudRepository<>), typeof(RepositoryBase<>));
@@ -56,6 +81,7 @@ app.UseSwaggerUI();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

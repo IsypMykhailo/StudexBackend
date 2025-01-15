@@ -35,28 +35,34 @@ public class CourseService(StudexContext context, ICrudRepository<Course> course
         }
     }
 
-    public async Task<Course> CreateAsync(CourseDto dto, CancellationToken ct = default)
+    public async Task<Course> CreateAsync(string userId, CourseDto dto, CancellationToken ct = default)
     {
         var course = dto.Adapt<CourseDto, Course>();
+        course.UserId = userId;
         await courseRepository.CreateAsync(course, ct);
         await courseRepository.SaveAsync(ct);
         return course;
     }
 
-    public async Task<Course?> GetByIdAsync(Guid id, Expression<Func<Course, object>>[]? includeProperties = null, CancellationToken ct = default)
+    public async Task<Course?> GetByIdAsync(Guid id, string userId, Expression<Func<Course, object>>[]? includeProperties = null, CancellationToken ct = default)
     {
-        return await courseRepository.GetByIdAsync(id, null, includeProperties, ct);
+        return await courseRepository.GetByIdAsync(id, c => c.UserId == userId, includeProperties, ct);
     }
 
-    public async Task<IEnumerable<Course>> GetAllAsync(Expression<Func<Course, object>>[]? includeProperties = null, CancellationToken ct = default)
+    public async Task<IEnumerable<Course>> GetAllAsync(string userId, Expression<Func<Course, object>>[]? includeProperties = null, CancellationToken ct = default)
     {
-        return await courseRepository.GetAsync(null, includeProperties, ct);
+        return await courseRepository.GetAsync(c => c.UserId == userId, includeProperties, ct);
     }
 
-    public async Task<bool> UpdateAsync(Guid id, CourseDto dto, CancellationToken ct = default)
+    public async Task<bool> UpdateAsync(Guid id, string userId, CourseDto dto, CancellationToken ct = default)
     {
-        var course = await courseRepository.GetByIdAsync(id, ct: ct);
+        var course = await courseRepository.GetByIdAsync(id, c => c.UserId == userId, ct: ct);
         if (course is null)
+        {
+            return false;
+        }
+        
+        if (course.UserId != userId)
         {
             return false;
         }
@@ -68,10 +74,15 @@ public class CourseService(StudexContext context, ICrudRepository<Course> course
         return true;
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task<bool> DeleteAsync(Guid id, string userId, CancellationToken ct = default)
     {
-        var course = await courseRepository.GetByIdAsync(id, ct: ct);
+        var course = await courseRepository.GetByIdAsync(id, c => c.UserId == userId, ct: ct);
         if (course is null)
+        {
+            return false;
+        }
+        
+        if (course.UserId != userId)
         {
             return false;
         }
