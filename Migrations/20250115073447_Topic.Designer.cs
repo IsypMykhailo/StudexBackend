@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Studex.Domain;
@@ -11,9 +12,11 @@ using Studex.Domain;
 namespace Studex.Migrations
 {
     [DbContext(typeof(StudexContext))]
-    partial class StudexContextModelSnapshot : ModelSnapshot
+    [Migration("20250115073447_Topic")]
+    partial class Topic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,9 +148,6 @@ namespace Studex.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserAnswerId")
-                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 

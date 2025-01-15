@@ -8,9 +8,9 @@ using Studex.Repositories;
 
 namespace Studex.Services;
 
-public class CourseService(StudexContext context, ICrudRepository<Course> courseRepository) : ICourseService
+public class CourseService(ICrudRepository<Course> courseRepository) : ICourseService
 {
-    public async Task UpdateCourseScoreAsync(Guid courseId)
+    public static async Task UpdateCourseScoreAsync(Guid courseId, StudexContext context)
     {
         var course = await context.Courses
             .Include(c => c.Lectures)

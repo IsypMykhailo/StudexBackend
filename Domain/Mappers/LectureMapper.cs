@@ -11,6 +11,7 @@ public class LectureMapper
         {
             Id = obj.Id,
             Name = obj.Name,
+            Topic = obj.Topic,
             Content = obj.Content,
             CreatedAt = obj.CreatedAt,
             UpdatedAt = obj.UpdatedAt

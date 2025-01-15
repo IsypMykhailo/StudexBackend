@@ -7,6 +7,6 @@ public class Answer
     public bool IsCorrect { get; set; }
     public Guid QuestionId { get; set; }
     public Question Question { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 }

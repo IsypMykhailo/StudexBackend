@@ -8,6 +8,7 @@ using Studex.Domain;
 using Studex.Domain.Extensions;
 using Studex.Middlewares;
 using Studex.Repositories;
+using Studex.Services;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -67,6 +68,11 @@ services
 
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(options => options.UseDateOnlyTimeOnlyStringConverters());
+
+services.AddHttpClient<IAIContentGenerator, HuggingFaceContentGenerator>();
+services.AddScoped<ILectureService, LectureService>();
+services.AddScoped<ITestService, TestService>();
+services.AddScoped<ICourseService, CourseService>();
 
 var app = builder.Build();
 

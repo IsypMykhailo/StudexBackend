@@ -10,7 +10,7 @@ public class Course
     public double MaxScore { get; set; }
     public required string Area { get; set; }
     public ICollection<Lecture> Lectures { get; set; } = default!;
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 
     public Course()

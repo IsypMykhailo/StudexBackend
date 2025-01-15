@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace Studex.Domain.Models;
 
 public class Test
@@ -9,7 +11,7 @@ public class Test
     public Guid LectureId { get; set; }
     public Lecture Lecture { get; set; } = null!;
     public ICollection<Question> Questions { get; set; } = default!;
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     
     public Test()
