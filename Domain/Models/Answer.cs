@@ -1,4 +1,4 @@
-namespace Studex.Models;
+namespace Studex.Domain.Models;
 
 public class Answer
 {

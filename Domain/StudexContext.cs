@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Studex.Domain.Models;
 
-namespace Studex.Models;
+namespace Studex.Domain;
 
 public class StudexContext(DbContextOptions<StudexContext> options) : DbContext(options)
 {

@@ -1,4 +1,4 @@
-namespace Studex.Models;
+namespace Studex.Domain.Models;
 
 public class Test
 {
@@ -6,9 +6,14 @@ public class Test
     public required string Name { get; set; }
     public double Score { get; set; }
     public double MaxScore { get; set; }
-    public Guid CourseId { get; set; }
-    public Course Course { get; set; } = null!;
-    public ICollection<Question> Questions { get; } = new List<Question>();
+    public Guid LectureId { get; set; }
+    public Lecture Lecture { get; set; } = null!;
+    public ICollection<Question> Questions { get; set; } = default!;
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    
+    public Test()
+    {
+        Questions = new HashSet<Question>();
+    }
 }

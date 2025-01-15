@@ -2,18 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Studex.Models;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Studex.Domain;
 
 #nullable disable
 
 namespace Studex.Migrations
 {
     [DbContext(typeof(StudexContext))]
-    [Migration("20250114214130_Answer")]
-    partial class Answer
+    [Migration("20250115001153_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,31 +21,31 @@ namespace Studex.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Studex.Models.Answer", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Answer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -54,63 +54,63 @@ namespace Studex.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("Studex.Models.Course", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Course", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Area")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double>("MaxScore")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<double>("Score")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Topic")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("Studex.Models.Lecture", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Lecture", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("CourseId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -119,27 +119,27 @@ namespace Studex.Migrations
                     b.ToTable("Lectures");
                 });
 
-            modelBuilder.Entity("Studex.Models.Question", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Question", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double>("Points")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<Guid>("TestId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -148,41 +148,42 @@ namespace Studex.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("Studex.Models.Test", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Test", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LectureId")
+                        .HasColumnType("uuid");
 
                     b.Property<double>("MaxScore")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<double>("Score")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
+                    b.HasIndex("LectureId")
+                        .IsUnique();
 
                     b.ToTable("Tests");
                 });
 
-            modelBuilder.Entity("Studex.Models.Answer", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Answer", b =>
                 {
-                    b.HasOne("Studex.Models.Question", "Question")
+                    b.HasOne("Studex.Domain.Models.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -191,9 +192,9 @@ namespace Studex.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("Studex.Models.Lecture", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Lecture", b =>
                 {
-                    b.HasOne("Studex.Models.Course", "Course")
+                    b.HasOne("Studex.Domain.Models.Course", "Course")
                         .WithMany("Lectures")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -202,9 +203,9 @@ namespace Studex.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("Studex.Models.Question", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Question", b =>
                 {
-                    b.HasOne("Studex.Models.Test", "Test")
+                    b.HasOne("Studex.Domain.Models.Test", "Test")
                         .WithMany("Questions")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -213,30 +214,33 @@ namespace Studex.Migrations
                     b.Navigation("Test");
                 });
 
-            modelBuilder.Entity("Studex.Models.Test", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Test", b =>
                 {
-                    b.HasOne("Studex.Models.Course", "Course")
-                        .WithMany("Tests")
-                        .HasForeignKey("CourseId")
+                    b.HasOne("Studex.Domain.Models.Lecture", "Lecture")
+                        .WithOne("Test")
+                        .HasForeignKey("Studex.Domain.Models.Test", "LectureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Course");
+                    b.Navigation("Lecture");
                 });
 
-            modelBuilder.Entity("Studex.Models.Course", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Course", b =>
                 {
                     b.Navigation("Lectures");
-
-                    b.Navigation("Tests");
                 });
 
-            modelBuilder.Entity("Studex.Models.Question", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Lecture", b =>
+                {
+                    b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("Studex.Domain.Models.Question", b =>
                 {
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("Studex.Models.Test", b =>
+            modelBuilder.Entity("Studex.Domain.Models.Test", b =>
                 {
                     b.Navigation("Questions");
                 });

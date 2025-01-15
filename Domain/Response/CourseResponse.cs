@@ -1,6 +1,6 @@
-namespace Studex.Models;
+namespace Studex.Domain.Response;
 
-public class Course
+public class CourseResponse
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public required string Name { get; set; }
@@ -8,8 +8,6 @@ public class Course
     public double Score { get; set; }
     public double MaxScore { get; set; }
     public required string Area { get; set; }
-    public ICollection<Lecture> Lectures { get; } = new List<Lecture>();
-    public ICollection<Test> Tests { get; } = new List<Test>();
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 }
