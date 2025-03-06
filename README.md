@@ -20,7 +20,6 @@ The backend for Studex - the AI powered studying assistant. It is built using mo
 1. Clone the repository:
    ```sh
    git clone <repository-url>
-   cd ai-study-assistant-backend
    ```
 
 2. Install dependencies:
